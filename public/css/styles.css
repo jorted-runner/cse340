@@ -5,6 +5,21 @@
   box-sizing: border-box;
 }
 
+
+/* FONT CLASSES */
+h1, h2, h3, h4, h5 {
+  font-family: "Roboto Condensed", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 250;
+  font-style: normal;
+}
+
+p, li, a {
+  font-family: "Noto Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
 /******* Header ***************/
 #top-header {
   display: flex;
