@@ -32,8 +32,6 @@ module.exports = {
 } else {
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    user: process.env.USER,
-    password: process.env.PASSWORD
   })
   module.exports = pool
 }
