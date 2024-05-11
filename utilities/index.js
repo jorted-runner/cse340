@@ -14,10 +14,26 @@ Util.getNav = async function (req, res, next) {
     return list
 }
 
+Util.vehicleDetailsTitle = async function(data) {
+  if (data && data.length > 0) {
+    return `${data[0].inv_year} ${data[0].inv_make} ${data[0].inv_model}`;
+  } else { 
+    return 'Error, no data found.';
+  }
+};
+
+Util.categoryTitle = async function(data) {
+  if (data && data.length > 0) {
+    return `${data[0].classification_name}`;
+  } else { 
+    return 'Error, no data found.';
+  }
+};
+
 // build classification view HTML
 Util.buildClassificationGrid = async function(data){
   let grid = ''; // Initialize grid
-  if(data.length > 0){
+  if(data && data.length > 0){
     grid = '<ul id="inv-display">';
     data.forEach(vehicle => { 
       grid += '<li>';
@@ -45,7 +61,6 @@ Util.buildClassificationGrid = async function(data){
   return grid;
 };
 
-
 Util.buildVehicleDetails = async function(data) {
   let carDetails = ''; 
   if(data.length > 0){
@@ -63,8 +78,7 @@ Util.buildVehicleDetails = async function(data) {
     carDetails += '<p class="notice">Sorry, no matching vehicle found.</p>'
   }
   return carDetails
-}
-
+};
 
 /* ****************************************
  * Middleware For Handling Errors

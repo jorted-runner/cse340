@@ -28,7 +28,7 @@ app.set('layout', './layouts/layout')
 app.use(static)
 app.get('/', utilities.handleErrors(baseController.buildHome))
 // Inventory routes
-app.use('/inv', inventoryRoute)
+app.use('/inv', utilities.handleErrors(inventoryRoute))
 
 
 app.use(async (req, res, next) => {
@@ -39,15 +39,26 @@ app.use(async (req, res, next) => {
 * Place after all other middleware
 *************************/
 app.use(async (err, req, res, next) => {
-  let nav = await utilities.getNav()
-  console.error(`Error at: "${req.originalUrl}": ${err.message}`)
-  if(err.status == 404){ message = err.message} else {message = 'Oh no! There was a crash. Maybe try a different route?'}
+  let nav = await utilities.getNav();
+  console.error(`Error at: "${req.originalUrl}": ${err.message}`);
+
+  let message;
+  if (err.status === 404) {
+    message = err.message;
+  } else if (err instanceof TypeError && err.message.includes("Cannot read properties of undefined")) {
+    message = 'The requested item does not exist or is out of range.';
+  } else {
+    message = 'Oh no! There was a crash. Maybe try a different route?';
+  }
+
   res.render("errors/error", {
     title: err.status || 'Server Error',
     message,
     nav
-  })
-})
+  });
+});
+
+
 
 /* ***********************
  * Local Server Information
