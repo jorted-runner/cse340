@@ -45,6 +45,26 @@ Util.buildClassificationGrid = async function(data){
   return grid
 }
 
+Util.buildVehicleDetails = async function(data) {
+  let carDetails = ''; 
+  if(data.length > 0){
+    carDetails += '<div class="car-details">'
+    data.forEach(vehicle => {
+      carDetails +=  `<img src="${vehicle.inv_image}" alt="${vehicle.inv_make}">`
+      carDetails += `<div><h2>${vehicle.inv_make} ${vehicle.inv_model} Details</h2><p><strong>Price: </strong>$${new Intl.NumberFormat('en-US').format(vehicle.inv_price)}</p>`
+      carDetails += `<p><strong>Description: </strong>${vehicle.inv_description}</p>`
+      carDetails += `<p><strong>Color: </strong> ${vehicle.inv_color}</p>`
+      carDetails += `<p><strong>Miles: </strong> ${vehicle.inv_miles}</p>`
+      carDetails += '</div>'
+    })
+    carDetails += '</div>'
+  } else {
+    carDetails += '<p class="notice">Sorry, no matching vehicle found.</p>'
+  }
+  return carDetails
+}
+
+
 /* ****************************************
  * Middleware For Handling Errors
  * Wrap other function in this for 
