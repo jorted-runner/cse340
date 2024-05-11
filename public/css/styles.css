@@ -36,7 +36,11 @@ p, li, a {
 /******* Navigation ***************/
 nav {
   background-color: black;
+  
+}
+nav a {
   color: white;
+  text-decoration: none;
 }
 nav ul {
   display: flex;
@@ -45,7 +49,7 @@ nav ul {
   height: 2rem;
   list-style: none;
 }
-nav ul li:hover {
+nav a:hover {
   text-decoration: underline;
 }
 
@@ -154,5 +158,75 @@ nav ul li:hover {
 @media (min-width: 770px) {
   .reviews ul {
     gap: 2.5rem;
+  }
+}
+/* Category Page */
+#inv-display {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 770px) {
+  #inv-display {
+    width: 90%;
+    grid-template-columns: 1fr;
+  }
+}
+#inv-display li {
+  border: 1px solid black;
+  width: 80%;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+#inv-display li a {
+  text-decoration: none;
+  color: black;
+}
+
+.namePrice {
+  background-color: lightgray;
+  flex: 1;
+  padding: 1fr;
+  display: flex;
+  align-items: center;
+}
+
+.namePrice hr {
+  margin-top: 0;
+}
+
+.namePrice h2 {
+  margin: 0;
+}
+
+.namePrice span {
+  display: block;
+}
+
+#inv-display li img {
+  max-width: 100%;
+  max-height: 80%;
+  margin: auto;
+}
+
+/* Vehicle Details Page */
+.car-details {
+  width: 80%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.car-details img {
+  width: 100%;
+  max-width: 600px;
+}
+@media (max-width: 770px) {
+  .car-details {
+    width: 90%;
+    grid-template-columns: 1fr;
   }
 }
