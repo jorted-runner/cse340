@@ -80,6 +80,43 @@ Util.buildVehicleDetails = async function(data) {
   return carDetails
 };
 
+Util.buildLogin = async function() {
+  let login = " <form class='form' id='login' method='post'><fieldset><label>Email or Username <input type='text' name='email' id='email' required placeholder='chef@chefscabinet.com'></label><label>Password <input type='password' name='password' id='password' required></label></fieldset><input type='submit' value='Login'></form>"
+  login += "<p>No Account? <a href='../../account/register'>Sign-up</a></p>"
+  return login
+}
+
+Util.buildRegister = async function() {
+  let form = `
+    <form class="form" id="register" method="post">
+      <fieldset>
+        <legend>Registration Information</legend>
+        <label>First Name* <input type="text" name="account_firstname" required autocomplete="given-name"></label>
+        <label>Last Name* <input type="text" name="account_lastname" required autocomplete="family-name"></label>
+        <label>Email Address* <input type="email" name="account_email" required placeholder="chef@chefscabinet.com"></label>
+        <label>Username* <input type="text" name="account_username" required></label>
+        <label>Password* 
+          <input type="password" id="password" name="account_password" required 
+            pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{12,}" 
+            title="Password must be at least 12 characters long, contain at least one uppercase letter, one number, and one special character.">
+          <button type="button" id="togglePassword" aria-label="Toggle password visibility">👁️</button>
+        </label>
+      </fieldset>
+      <input type="submit" value="Register">
+    </form>
+    <script>
+      document.getElementById('togglePassword').addEventListener('click', function (e) {
+        const passwordInput = document.getElementById('password');
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.textContent = type === 'password' ? '👁️' : '👁️';
+      });
+    </script>
+  `
+  return form
+}
+
+
 /* ****************************************
  * Middleware For Handling Errors
  * Wrap other function in this for 
