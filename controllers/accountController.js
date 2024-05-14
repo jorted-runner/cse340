@@ -11,7 +11,8 @@ async function buildLogin(req, res, next) {
     res.render('./account/login', {
         title: 'Login',
         nav,
-        login
+        login, 
+        errors: null
     })
 }
 
@@ -21,7 +22,8 @@ async function buildRegister(req, res, next) {
     res.render('./account/register', {
         title: 'Register',
         nav, 
-        registerForm
+        registerForm,
+        errors: null,
     })
 }
 

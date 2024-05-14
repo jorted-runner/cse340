@@ -228,3 +228,16 @@ nav a:hover {
     grid-template-columns: 1fr;
   }
 }
+
+input:required:invalid,
+input:focus:invalid {
+    box-shadow: none; /* Remove any existing box shadow */
+    border-color: red; /* Set border color to red */
+    border-right: 5px solid red; /* Add a red strip on the right edge */
+}
+
+input:required:valid {
+    box-shadow: none; /* Remove any existing box shadow */
+    border-color: green; /* Set border color to green */
+    border-right: 5px solid green; /* Add a green strip on the right edge */
+}

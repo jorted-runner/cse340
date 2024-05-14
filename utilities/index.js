@@ -95,7 +95,8 @@ Util.buildRegister = async function() {
         <label>Last Name* <input type="text" name="account_lastname" required autocomplete="family-name"></label>
         <label>Email Address* <input type="email" name="account_email" required placeholder="chef@chefscabinet.com"></label>
         <label>Username* <input type="text" name="account_username" required></label>
-        <label>Password* 
+        <label>Password*
+        <span>Passwords must be at least 12 characters and contain at least 1 number, 1 capital letter and 1 special character</span> 
           <input type="password" id="password" name="account_password" required 
             pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{12,}" 
             title="Password must be at least 12 characters long, contain at least one uppercase letter, one number, and one special character.">
