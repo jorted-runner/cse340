@@ -4,6 +4,23 @@
       res.redirect('/')
     } %>
 
-<%- messages() %>
+<% if (errors) { %>
+  <ul class="notice">
+  <% errors.array().forEach(error => { %>
+    <li><%= error.msg %></li>
+<%  }) %>
+  </ul>
+<% } %>
 
-<%- login %>
+<form id="login" class="form" action="/account/login" method="post">
+  <fieldset>
+    <label>Email <input type="email" name="account_email" required placeholder="chef@chefscabinet.com" value="<%= locals.account_email %>"></label>
+    <label>Password 
+      <input type="password" id="password" name="account_password" required 
+      pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{12,}" 
+      title="Password must be at least 12 characters long, contain at least one uppercase letter, one number, and one special character.">
+    </label>
+  </fieldset>
+  <input type='submit' value='Login'>
+</form>
+<p>No Account? <a href='../../account/register'>Sign-up</a></p>
