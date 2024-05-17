@@ -80,6 +80,10 @@ Util.buildVehicleDetails = async function(data) {
   return carDetails
 };
 
+Util.getNewClassification = async function() {
+  let form = '<form >'
+}
+
 /* ****************************************
  * Middleware For Handling Errors
  * Wrap other function in this for 

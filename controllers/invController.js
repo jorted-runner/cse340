@@ -29,4 +29,63 @@ invCont.buildCarDetails = async function (req, res, next) {
     })
 }
 
+invCont.buildManagement = async function (req, res, next) {
+    const title = 'Site Management'
+    const newClass = '<a href="../inv/management/new-class">Add New Classification</a>'
+    const newInv = '<a href="#">Add New Inventory</a>'
+    const nav = await utilities.getNav()
+    res.render('./inventory/management', {
+        title: title,
+        nav,
+        new_classification: newClass,
+        new_inventory: newInv,
+    })
+}
+
+invCont.buildNewClass = async function (req, res, next) {
+    const title = 'Site Management: New Classification'
+    const nav = await utilities.getNav()
+    res.render('./inventory/add-classification', {
+        title: title,
+        nav,
+        errors: null
+    })
+}
+
+
+invCont.addNewClass = async function (req, res, next) {
+    try {
+        const nav = await utilities.getNav();
+        const { classificationName } = req.body;
+        
+        const regResult = await invModel.addNewClass(classificationName);
+        
+        if (regResult) {
+            const title = 'Site Management';
+            const newClass = '<a href="../inv/management/new-class">Add New Classification</a>';
+            const newInv = '<a href="#">Add New Inventory</a>';
+            const nav = await utilities.getNav()
+            req.flash("notice", `Congratulations, ${classificationName} has been added successfully.`);
+            return res.status(201).render('./inventory/management', {
+                title: title,
+                nav,
+                new_classification: newClass,
+                new_inventory: newInv,
+                errors: null
+            });
+        } else {
+            throw new Error("Failed to add classification");
+        }
+    } catch (error) {
+        const nav = await utilities.getNav();
+        const title = 'Add New Classification';
+        req.flash("notice", "Sorry, the adding classification failed.");
+        return res.status(501).render('./inventory/add-classification', {
+            title: title,
+            nav,
+            errors: null
+        });
+    }
+};
+
 module.exports = invCont
