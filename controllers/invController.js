@@ -32,7 +32,7 @@ invCont.buildCarDetails = async function (req, res, next) {
 invCont.buildManagement = async function (req, res, next) {
     const title = 'Site Management'
     const newClass = '<a href="../inv/management/new-class">Add New Classification</a>'
-    const newInv = '<a href="#">Add New Inventory</a>'
+    const newInv = '<a href="../inv/management/new-inv">Add New Inventory</a>'
     const nav = await utilities.getNav()
     res.render('./inventory/management', {
         title: title,
@@ -52,20 +52,84 @@ invCont.buildNewClass = async function (req, res, next) {
     })
 }
 
+invCont.buildNewInv = async function (req, res, next) {
+    const title = 'Site Management: New Inventory'
+    const nav = await utilities.getNav()
+    const classifications = await utilities.getClassifications()
+    res.render('./inventory/add-inventory', {
+        title: title,
+        nav,
+        classifications,
+        errors: null
+    })
+}
 
 invCont.addNewClass = async function (req, res, next) {
     try {
-        const nav = await utilities.getNav();
-        const { classificationName } = req.body;
+        const { classificationName } = req.body
         
-        const regResult = await invModel.addNewClass(classificationName);
+        const regResult = await invModel.addNewClass(classificationName)
         
+        if (regResult) {
+            const title = 'Site Management'
+            const newClass = '<a href="../inv/management/new-class">Add New Classification</a>'
+            const newInv = '<a href="../inv/management/new-inv">Add New Inventory</a>'
+            const nav = await utilities.getNav()
+            req.flash("notice", `Congratulations, ${classificationName} has been added successfully.`)
+            return res.status(201).render('./inventory/management', {
+                title: title,
+                nav,
+                new_classification: newClass,
+                new_inventory: newInv,
+                errors: null
+            })
+        } else {
+            throw new Error("Failed to add classification")
+        }
+    } catch (error) {
+        const nav = await utilities.getNav()
+        const title = 'Add New Classification'
+        req.flash("notice", "Sorry, the adding classification failed.")
+        return res.status(501).render('./inventory/add-classification', {
+            title: title,
+            nav,
+            errors: null
+        })
+    }
+}
+
+invCont.addNewInventory = async function (req, res, next) {
+    try {
+        // Destructure the required fields from the request body
+        const {
+            inv_make,
+            inv_model,
+            inv_year,
+            inv_description,
+            inv_image,
+            inv_thumbnail,
+            inv_price,
+            inv_miles,
+            inv_color,
+            classification_id
+        } = req.body;
+
+        // Attempt to add the new inventory item to the database
+        const regResult = await invModel.addNewInv(
+            inv_make, inv_model, inv_year, inv_description,
+            inv_image, inv_thumbnail, inv_price, inv_miles,
+            inv_color, classification_id
+        );
+
+        // Check if the inventory was added successfully
         if (regResult) {
             const title = 'Site Management';
             const newClass = '<a href="../inv/management/new-class">Add New Classification</a>';
-            const newInv = '<a href="#">Add New Inventory</a>';
-            const nav = await utilities.getNav()
-            req.flash("notice", `Congratulations, ${classificationName} has been added successfully.`);
+            const newInv = '<a href="../inv/management/new-inv">Add New Inventory</a>';
+            const nav = await utilities.getNav();
+
+            // Flash a success message and render the management page
+            req.flash("notice", `Congratulations, ${inv_model} has been added successfully.`);
             return res.status(201).render('./inventory/management', {
                 title: title,
                 nav,
@@ -74,16 +138,32 @@ invCont.addNewClass = async function (req, res, next) {
                 errors: null
             });
         } else {
-            throw new Error("Failed to add classification");
+            // If adding inventory failed, throw an error
+            throw new Error("Failed to add inventory");
         }
     } catch (error) {
+        // In case of an error, fetch necessary data for re-rendering the form
+        const title = 'Site Management: New Inventory';
         const nav = await utilities.getNav();
-        const title = 'Add New Classification';
-        req.flash("notice", "Sorry, the adding classification failed.");
-        return res.status(501).render('./inventory/add-classification', {
+        const classifications = await utilities.getClassifications();
+
+        // Flash an error message and re-render the add-inventory page with the form data
+        req.flash("notice", "Sorry, adding the inventory failed.");
+        return res.status(501).render('./inventory/add-inventory', {
             title: title,
             nav,
-            errors: null
+            classifications,
+            errors: [{ msg: error.message }], // Include the error message
+            inv_make,
+            inv_model,
+            inv_description,
+            inv_year,
+            inv_image,
+            inv_thumbnail,
+            inv_price,
+            inv_miles,
+            inv_color,
+            classification_id // Pass back the classification_id
         });
     }
 };

@@ -80,8 +80,9 @@ Util.buildVehicleDetails = async function(data) {
   return carDetails
 };
 
-Util.getNewClassification = async function() {
-  let form = '<form >'
+Util.getClassifications = async function() {
+  let data = await invModel.getClassifications()
+  return data.rows
 }
 
 /* ****************************************
