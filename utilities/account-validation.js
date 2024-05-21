@@ -98,12 +98,6 @@ validate.loginRules = () => {
         minSymbols: 1,
       })
       .withMessage("Password does not meet requirements.")
-      .custom(async (value, { req }) => {
-        const passwordCheck = await accountModel.checkPassword(req.body.account_email, value)
-        if (!passwordCheck) {
-          throw new Error("Password is incorrect.")
-        }
-      }),
   ]
 }
 

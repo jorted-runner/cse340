@@ -3,6 +3,8 @@ const utilities = require('../utilities/')
 const accountModel = require('../models/account-model')
 const validate = require('../utilities/account-validation')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 /* ****************************************
 *  Deliver login view
@@ -68,34 +70,72 @@ async function registerAccount(req, res) {
       })
     }
   }
-async function loginAccount(req, res) {
-  let nav = await utilities.getNav()
-  const { account_email, account_password } = req.body
 
-  try {
-    const user = await accountModel.getUserByEmail(account_email)
-    if (user && await accountModel.checkPassword(account_email, account_password)) {
-      req.flash(
-        "notice",
-        `Congratulations ${user.account_firstname}, you're logged in.`
-      )
-      res.status(200).send(`Congratulations ${user.account_firstname}, you're logged in.`)
-    } else {
-      req.flash("notice", "Sorry, the login failed.")
-      res.status(401).render("account/login", {
-        title: "Login",
-        nav,
-        account_email,
-      })
+  async function loginAccount(req, res) {
+    let nav = await utilities.getNav();
+    const { account_email, account_password } = req.body;
+
+    try {
+        const accountData = await accountModel.getUserByEmail(account_email);
+        if (!accountData) {
+            req.flash("notice", "Please check your credentials and try again.");
+            return res.status(400).render("account/login", {
+                title: "Login",
+                nav,
+                errors: null,
+                account_email,
+            });
+        }
+
+        const isPasswordMatch = await bcrypt.compare(account_password, accountData.account_password);
+        if (isPasswordMatch) {
+            delete accountData.account_password;
+            const accessToken = jwt.sign(accountData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 3600 });
+            const cookieOptions = {
+                httpOnly: true,
+                maxAge: 3600 * 1000,
+                secure: process.env.NODE_ENV !== 'development',
+            };
+            res.cookie("jwt", accessToken, cookieOptions);
+            return res.redirect("/account/");
+        } else {
+            req.flash("notice", "Please check your credentials and try again.");
+            return res.status(400).render("account/login", {
+                title: "Login",
+                nav,
+                errors: null,
+                account_email,
+            });
+        }
+    } catch (error) {
+        console.error("Login error:", error);
+        req.flash("notice", "An unexpected error occurred. Please try again later.");
+        return res.status(500).render("account/login", {
+            title: "Login",
+            nav,
+            errors: null,
+            account_email,
+        });
     }
+}
+
+async function buildAccount(req, res) {
+  try {
+      let nav = await utilities.getNav();
+      res.render('./account/management', {
+          title: 'Account Management',
+          nav,
+          errors: null,
+      });
   } catch (error) {
-    console.error("Login error:", error)
-    req.flash("notice", "An error occurred during login.")
-    res.status(500).render("account/login", {
-      title: "Login",
-      nav,
-    })
+      console.error("Build Account error:", error);
+      req.flash("notice", "An unexpected error occurred. Please try again later.");
+      return res.status(500).render("error", {
+          title: "Error",
+          nav,
+          errors: ["An unexpected error occurred. Please try again later."]
+      });
   }
 }
 
-module.exports = { buildLogin, buildRegister, registerAccount, loginAccount }
+module.exports = { buildLogin, buildRegister, registerAccount, loginAccount, buildAccount }

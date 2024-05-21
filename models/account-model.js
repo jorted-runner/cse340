@@ -21,33 +21,15 @@ async function checkExistingEmail(account_email) {
     return error.message
   }
 }
-async function getUserByEmail(account_email) {
+async function getUserByEmail (account_email) {
   try {
-    const sql = "SELECT * FROM account WHERE account_email = $1"
-    const result = await pool.query(sql, [account_email])
-    if (result.rowCount > 0) {
-      return result.rows[0]
-    }
-    return null
+    const result = await pool.query(
+      'SELECT account_id, account_firstname, account_lastname, account_email, account_type, account_password FROM account WHERE account_email = $1',
+      [account_email])
+    return result.rows[0]
   } catch (error) {
-    console.error("Error fetching user by email:", error)
-    throw new Error("Database error")
-  }
-}
-async function checkPassword(account_email, entered_password) {
-  try {
-    const sql = "SELECT account_password FROM account WHERE account_email = $1"
-    const result = await pool.query(sql, [account_email])
-    if (result.rowCount > 0) {
-      const storedPassword = result.rows[0].account_password
-      return storedPassword === entered_password
-    } else {
-      return false
-    }
-  } catch (error) {
-    console.error("Error checking password:", error)
-    throw new Error("Database error")
+    return new Error("No matching email found")
   }
 }
 
-module.exports = { registerAccount, checkExistingEmail, checkPassword, getUserByEmail}
+module.exports = { registerAccount, checkExistingEmail, getUserByEmail}
