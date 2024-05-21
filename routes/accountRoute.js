@@ -6,7 +6,7 @@ const accountController = require('../controllers/accountController')
 const regValidate = require('../utilities/account-validation')
 
 // Remember to fix this accountsController function
-router.get('/account/', accountController.buildAccount)
+router.get('/', accountController.buildAccount)
 router.get('/login', accountController.buildLogin)
 router.get('/register', accountController.buildRegister)
 
@@ -23,6 +23,6 @@ router.post(
   "/login",
   regValidate.loginRules(),
   regValidate.checkLoginData,
-  utilities.handleErrors(accountController.loginAccount)
+  utilities.handleErrors(accountController.accountLogin)
 )
 module.exports = router;

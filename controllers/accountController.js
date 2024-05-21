@@ -27,6 +27,15 @@ async function buildRegister(req, res, next) {
     })
 }
 
+async function buildAccount(req, res, next) {
+  let nav = await utilities.getNav();
+  res.render('./account/management', {
+      title: 'Account Management',
+      nav,
+      errors: null,
+  })
+}
+
 /* ****************************************
 *  Process Registration
 * *************************************** */
@@ -71,71 +80,34 @@ async function registerAccount(req, res) {
     }
   }
 
-  async function loginAccount(req, res) {
-    let nav = await utilities.getNav();
-    const { account_email, account_password } = req.body;
-
-    try {
-        const accountData = await accountModel.getUserByEmail(account_email);
-        if (!accountData) {
-            req.flash("notice", "Please check your credentials and try again.");
-            return res.status(400).render("account/login", {
-                title: "Login",
-                nav,
-                errors: null,
-                account_email,
-            });
-        }
-
-        const isPasswordMatch = await bcrypt.compare(account_password, accountData.account_password);
-        if (isPasswordMatch) {
-            delete accountData.account_password;
-            const accessToken = jwt.sign(accountData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 3600 });
-            const cookieOptions = {
-                httpOnly: true,
-                maxAge: 3600 * 1000,
-                secure: process.env.NODE_ENV !== 'development',
-            };
-            res.cookie("jwt", accessToken, cookieOptions);
-            return res.redirect("/account/");
-        } else {
-            req.flash("notice", "Please check your credentials and try again.");
-            return res.status(400).render("account/login", {
-                title: "Login",
-                nav,
-                errors: null,
-                account_email,
-            });
-        }
-    } catch (error) {
-        console.error("Login error:", error);
-        req.flash("notice", "An unexpected error occurred. Please try again later.");
-        return res.status(500).render("account/login", {
-            title: "Login",
-            nav,
-            errors: null,
-            account_email,
-        });
+  async function accountLogin(req, res) {
+    let nav = await utilities.getNav()
+    const { account_email, account_password } = req.body
+    const accountData = await accountModel.getAccountByEmail(account_email)
+    if (!accountData) {
+     req.flash("notice", "Please check your credentials and try again.")
+     res.status(400).render("account/login", {
+      title: "Login",
+      nav,
+      errors: null,
+      account_email,
+     })
+    return
     }
-}
+    try {
+     if (await bcrypt.compare(account_password, accountData.account_password)) {
+     delete accountData.account_password
+     const accessToken = jwt.sign(accountData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 3600 })
+     if(process.env.NODE_ENV === 'development') {
+       res.cookie("jwt", accessToken, { httpOnly: true, maxAge: 3600 * 1000 })
+       } else {
+         res.cookie("jwt", accessToken, { httpOnly: true, secure: true, maxAge: 3600 * 1000 })
+       }
+     return res.redirect("/account/")
+     }
+    } catch (error) {
+     return new Error('Access Forbidden')
+    }
+   }
 
-async function buildAccount(req, res) {
-  try {
-      let nav = await utilities.getNav();
-      res.render('./account/management', {
-          title: 'Account Management',
-          nav,
-          errors: null,
-      });
-  } catch (error) {
-      console.error("Build Account error:", error);
-      req.flash("notice", "An unexpected error occurred. Please try again later.");
-      return res.status(500).render("error", {
-          title: "Error",
-          nav,
-          errors: ["An unexpected error occurred. Please try again later."]
-      });
-  }
-}
-
-module.exports = { buildLogin, buildRegister, registerAccount, loginAccount, buildAccount }
+module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccount }
