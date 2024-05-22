@@ -10,6 +10,7 @@ router.get('/detail/:vehicleInvId', invController.buildCarDetails);
 router.get('/management', invController.buildManagement);
 router.get('/management/new-class', invController.buildNewClass);
 router.get('/management/new-inv', invController.buildNewInv);
+router.get('/getInventory/:classification_id', utilities.handleErrors(invController.getInventoryJSON))
 
 router.post(
   "/management/new-class",

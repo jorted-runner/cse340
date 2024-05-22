@@ -28,10 +28,12 @@ async function buildRegister(req, res, next) {
 }
 
 async function buildAccount(req, res, next) {
-  let nav = await utilities.getNav();
+  let nav = await utilities.getNav()
+  const classifications = await utilities.getClassifications()
   res.render('./account/management', {
       title: 'Account Management',
       nav,
+      classifications,
       errors: null,
   })
 }
