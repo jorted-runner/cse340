@@ -1,0 +1,63 @@
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <% } else {
+      res.redirect('/')
+    } %>
+
+  <% if (errors) { %>
+    <ul class="notice">
+    <% errors.array().forEach(error => { %>
+      <li><%= error.msg %></li>
+  <%  }) %>
+    </ul>
+  <% } %>
+
+  <form id="updateForm" class="form" action="/inv/update" method="post">
+    <fieldset>
+      <label for="inv_make">Make 
+        <input type="text" name="inv_make" required value="<%= locals.inv_make || '' %>">
+      </label>
+      <label for="inv_model">Model 
+        <input type="text" name="inv_model" required value="<%= locals.inv_model || '' %>">
+      </label>
+      <label for="inv_year">Year 
+        <input type="text" name="inv_year" required value="<%= locals.inv_year || '' %>">
+      </label>
+      <label for="inv_description">Description 
+        <input type="text" name="inv_description" required value="<%= locals.inv_description || '' %>">
+      </label>
+      <label for="inv_image">Image 
+        <input type="text" name="inv_image" required value="<%= locals.inv_image || '' %>">
+      </label>
+      <label for="inv_thumbnail">Thumbnail 
+        <input type="text" name="inv_thumbnail" required value="<%= locals.inv_thumbnail || '' %>">
+      </label>
+      <label for="inv_price">Price 
+        <input type="number" name="inv_price" required value="<%= locals.inv_price || '' %>">
+      </label>
+      <label for="inv_miles">Mileage 
+        <input type="number" name="inv_miles" required value="<%= locals.inv_miles || '' %>">
+      </label>
+      <label for="inv_color">Color 
+        <input type="text" name="inv_color" required value="<%= locals.inv_color || '' %>">
+      </label>
+      <label for="classification_id">Select Classification:
+        <select name="classification_id" id="classification" required>
+          <% classifications.forEach(classification => { %>
+              <option value="<%= classification.classification_id %>" 
+                  <%= classification.classification_id === locals.classification_id ? 'selected' : '' %>>
+                  <%= classification.classification_name %>
+              </option>
+          <% }) %>
+      </select>
+      
+      </label>
+          
+    </fieldset>
+    <button disabled type="submit">Update Vehicle</button>
+    <input type='hidden' name='inv_id'
+    <% if(locals.inv_id) { %> value="<%= locals.inv_id %>"
+    <% } %>>
+  </form>
+  <script src="../../js/inv-update.js"></script>
+  

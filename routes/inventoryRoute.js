@@ -11,6 +11,7 @@ router.get('/management', invController.buildManagement);
 router.get('/management/new-class', invController.buildNewClass);
 router.get('/management/new-inv', invController.buildNewInv);
 router.get('/getInventory/:classification_id', utilities.handleErrors(invController.getInventoryJSON))
+router.get('/edit/:inv_id', utilities.handleErrors(invController.editInventory))
 
 router.post(
   "/management/new-class",
@@ -25,5 +26,11 @@ router.post(
   invValidate.checkInvData,
   utilities.handleErrors(invController.addNewInventory)
 );
+
+router.post('/update/',
+  invValidate.inventoryRules(),
+  invValidate.checkUpdateData,
+  utilities.handleErrors(invController.updateInventory)
+)
 
 module.exports = router;
