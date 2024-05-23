@@ -179,7 +179,6 @@ invCont.getInventoryJSON = async (req, res, next) => {
 }
 invCont.editInventory = async function (req, res, next) {
     let inv_id = parseInt(req.params.inv_id)
-    console.log(inv_id)
     const title = 'Site Management: Edit '
     const nav = await utilities.getNav()
     const itemData = await invModel.getInventoryByInventoryId(inv_id)
@@ -243,6 +242,82 @@ invCont.updateInventory = async function (req, res, next) {
       req.flash("notice", "Sorry, the insert failed.")
       res.status(501).render("inventory/edit-inventory", {
       title: "Edit " + itemName,
+      nav,
+      classificationSelect: classificationSelect,
+      errors: null,
+      inv_id,
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color,
+      classification_id
+      })
+    }
+  }
+
+invCont.buildDeleteInventory = async function (req, res, next) {
+    let inv_id = parseInt(req.params.inv_id)
+    const title = 'Site Management: Delete '
+    const nav = await utilities.getNav()
+    const itemData = await invModel.getInventoryByInventoryId(inv_id)
+    const classifications = await utilities.getClassifications()
+    const itemName = `${itemData[0].inv_make} ${itemData[0].inv_model}`
+    res.render("./inventory/delete-confirm", {
+      title: title + itemName,
+      nav,
+      classifications,
+      errors: null,
+      inv_id: itemData[0].inv_id,
+      inv_make: itemData[0].inv_make,
+      inv_model: itemData[0].inv_model,
+      inv_year: itemData[0].inv_year,
+      inv_price: itemData[0].inv_price,
+    })
+}
+
+invCont.deleteInventory = async function (req, res, next) {
+    let nav = await utilities.getNav()
+    const {
+      inv_id,
+      inv_make,
+      inv_model,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_year,
+      inv_miles,
+      inv_color,
+      classification_id,
+    } = req.body
+    const deleteResult = await invModel.deleteInventory(
+      inv_id,  
+      inv_make,
+      inv_model,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_year,
+      inv_miles,
+      inv_color,
+      classification_id
+    )
+  
+    if (deleteResult) {
+      req.flash("notice", `The vehicle was successfully deleted.`)
+      res.redirect("/account/")
+    } else {
+      const classificationSelect = await utilities.buildClassificationGrid(classification_id)
+      const itemName = `${inv_make} ${inv_model}`
+      req.flash("notice", "Sorry, the insert failed.")
+      res.status(501).render("inventory/delete-confirm", {
+      title: "Site Management: Delete " + itemName,
       nav,
       classificationSelect: classificationSelect,
       errors: null,

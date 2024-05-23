@@ -1,0 +1,36 @@
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <% } else {
+      res.redirect('/')
+    } %>
+
+  <% if (errors) { %>
+    <ul class="notice">
+    <% errors.array().forEach(error => { %>
+      <li><%= error.msg %></li>
+  <%  }) %>
+    </ul>
+  <% } %>
+    <p>Confirm Deletion - The delete is permanent.</p>
+  <form id="updateForm" class="form" action="/inv/delete" method="post">
+    <fieldset>
+      <label for="inv_make">Make 
+        <input type="text" name="inv_make" required readonly value="<%= locals.inv_make || '' %>">
+      </label>
+      <label for="inv_model">Model 
+        <input type="text" name="inv_model" required readonly value="<%= locals.inv_model || '' %>">
+      </label>
+      <label for="inv_year">Year 
+        <input type="text" name="inv_year" required readonly value="<%= locals.inv_year || '' %>">
+      </label>
+      <label for="inv_price">Price 
+        <input type="number" name="inv_price" required readonly value="<%= locals.inv_price || '' %>">
+      </label>
+    </fieldset>
+    <button type="submit">Confirm Vehicle Removal</button>
+    <input type='hidden' name='inv_id'
+    <% if(locals.inv_id) { %> value="<%= locals.inv_id %>"
+    <% } %>>
+  </form>
+  <script src="../../js/inv-update.js"></script>
+  
