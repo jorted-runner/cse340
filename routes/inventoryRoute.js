@@ -18,6 +18,7 @@ router.get('/delete/:inv_id', accValidate.checkAdmin, utilities.handleErrors(inv
 
 router.post(
   "/management/new-class",
+  accValidate.checkAdmin,
   invValidate.classificationRules(),
   invValidate.checkClassData,
   utilities.handleErrors(invController.addNewClass)
@@ -25,6 +26,7 @@ router.post(
 
 router.post(
   "/management/new-inv",
+  accValidate.checkAdmin,
   invValidate.inventoryRules(),
   invValidate.checkInvData,
   utilities.handleErrors(invController.addNewInventory)
@@ -32,6 +34,7 @@ router.post(
 
 router.post(
   '/update/',
+  accValidate.checkAdmin,
   invValidate.inventoryRules(),
   invValidate.checkUpdateData,
   utilities.handleErrors(invController.updateInventory)
@@ -39,6 +42,7 @@ router.post(
 
 router.post(
   '/delete/',
+  accValidate.checkAdmin,
   utilities.handleErrors(invController.deleteInventory)
 );
 
