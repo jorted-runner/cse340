@@ -99,7 +99,7 @@ Util.checkJWTToken = (req, res, next) => {
       return res.redirect("/account/login")
      }
      res.locals.accountData = accountData
-     res.locals.loggedin = 1
+     res.locals.loggedIn = 1
      next()
     })
   } else {
@@ -108,7 +108,7 @@ Util.checkJWTToken = (req, res, next) => {
  }
 
  Util.checkLogin = (req, res, next) => {
-  if (res.locals.loggedin) {
+  if (res.locals.loggedIn) {
     next()
   } else {
     req.flash("notice", "Please log in.")

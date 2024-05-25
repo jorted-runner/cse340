@@ -11,18 +11,19 @@
 <%  }) %>
   </ul>
 <% } %>
+<% if ( locals.accountData.account_type === 'Employee' || locals.accountData.account_type === 'Admin') { %>
+  <h2>Manage Inventory</h2>
+  <%- messages() %>
+  <p>Select Classification:</p>
+  <select name="classification_id" id="classification" required>
+      <% classifications.forEach(classification => { %>
+          <option value="<%= classification.classification_id %>">
+              <%= classification.classification_name %>
+          </option>
+      <% }) %>
+  </select>
+  <table id="inventoryDisplay"></table>
+<% } %>
 
-<h2>Manage Inventory</h2>
-<%- messages() %>
-<p>Select Classification:</p>
-<select name="classification_id" id="classification" required>
-    <% classifications.forEach(classification => { %>
-        <option value="<%= classification.classification_id %>">
-            <%= classification.classification_name %>
-        </option>
-    <% }) %>
-</select>
-
-<table id="inventoryDisplay"></table>
 <noscript>JavaScript must be enabled to use this page.</noscript>
 <script src="../../js/inventory.js"></script>
