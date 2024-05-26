@@ -132,6 +132,23 @@ async function registerAccount(req, res) {
 async function accountUpdate(req, res) {
   if (req.body.account_password) {
     const { account_id, account_password } = req.body
+    let validPass = await validate.checkValidPassword(account_password)
+    if (!validPass) {
+      let nav = await utilities.getNav()
+      const data = await accountModel.getAccountByID(account_id)
+      req.flash("notice", 'Sorry, new password did not meet the requirements.')
+      res.status(500).render(`account/update`, {
+        title: `Update Account: ${data.account_firstname} ${data.account_lastname}`,
+        nav,
+        errors: null,
+        account_id: data.account_id,
+        account_firstname: data.account_firstname,
+        account_lastname: data.account_lastname,
+        account_email: data.account_email,
+        account_password: data.account_password
+      })
+      return
+    }
     let hashedPassword
     try {
       hashedPassword = await bcrypt.hashSync(account_password, 10)
@@ -188,6 +205,23 @@ async function accountUpdate(req, res) {
     }
   } else {
     const { account_firstname, account_lastname, account_email, account_id } = req.body
+    const emailMatches = await accountModel.checkMatching(account_email, account_id)
+    const emailExists = await accountModel.checkExistingEmail(account_email)
+    if (!emailMatches && emailExists) {
+      let nav = await utilities.getNav()
+      const data = await accountModel.getAccountByID(account_id)
+      req.flash("notice", 'Email already associated with a different account.')
+      res.status(500).render(`account/update`, {
+        title: `Update Account: ${data.account_firstname} ${data.account_lastname}`,
+        nav,
+        errors: null,
+        account_id: data.account_id,
+        account_firstname: data.account_firstname,
+        account_lastname: data.account_lastname,
+        account_email: data.account_email,
+        account_password: data.account_password
+      })
+    }
     const regResult = await accountModel.updateAccount(
       account_firstname,
       account_lastname,

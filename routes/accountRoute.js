@@ -12,6 +12,11 @@ router.get('/login', utilities.handleErrors(accountController.buildLogin))
 router.get('/register', utilities.handleErrors(accountController.buildRegister))
 router.get('/update/:account_id', regValidate.checkMatch, utilities.handleErrors(accountController.buildUpdate))
 
+router.get("/logout", (req, res) => {
+  res.clearCookie('jwt');
+  res.redirect('/');
+});
+
 // Post requests
 router.post(
     "/register",

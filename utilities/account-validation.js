@@ -109,6 +109,28 @@ validate.checkLoginData = async (req, res, next) => {
   next()
 }
 
+validate.checkValidPassword = async (password) => {
+  const validationChain = body("account_password")
+    .trim()
+    .notEmpty()
+    .isStrongPassword({
+      minLength: 12,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    })
+    .withMessage("Password does not meet requirements.")
+  const req = {
+    body: {
+      account_password: password
+    }
+  }
+  await validationChain.run(req)
+  const result = validationResult(req)
+  return result.isEmpty()
+};
+
 validate.checkAdmin = async (req, res, next) => {
     if (res.locals.accountData.account_type == 'Employee' || res.locals.accountData.account_type == 'Admin') {
       next()

@@ -32,6 +32,17 @@ async function getAccountByEmail (account_email) {
   }
 }
 
+async function checkMatching (account_email, account_id) {
+  const result = await pool.query(
+    'SELECT account_email FROM account WHERE account_id = $1',
+    [account_id])
+  if (result.rows[0].account_email == account_email) {
+    return true
+  } else {
+    return false
+  }
+}
+
 async function getAccountByID (account_id) {
   try {
     const result = await pool.query(
@@ -74,4 +85,4 @@ async function updateAccount(account_firstname, account_lastname, account_email,
 }
 
 
-module.exports = { registerAccount, checkExistingEmail, getAccountByEmail, getAccountByID, updatePassword, updateAccount }
+module.exports = { registerAccount, checkExistingEmail, getAccountByEmail, getAccountByID, updatePassword, updateAccount, checkMatching }
