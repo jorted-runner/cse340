@@ -6,11 +6,11 @@ const invValidate = require('../utilities/inventory-validation')
 const utilities = require('../utilities')
 const accValidate = require('../utilities/account-validation')
 
-router.get('/type/:classificationId', invController.buildByClassificationId);
-router.get('/detail/:vehicleInvId', invController.buildCarDetails);
-router.get('/management', accValidate.checkAdmin, invController.buildManagement);
-router.get('/management/new-class', accValidate.checkAdmin, invController.buildNewClass);
-router.get('/management/new-inv', accValidate.checkAdmin, invController.buildNewInv);
+router.get('/type/:classificationId', utilities.handleErrors(invController.buildByClassificationId))
+router.get('/detail/:vehicleInvId', utilities.handleErrors(invController.buildCarDetails))
+router.get('/management', accValidate.checkAdmin, utilities.handleErrors(invController.buildManagement))
+router.get('/management/new-class', accValidate.checkAdmin, utilities.handleErrors(invController.buildNewClass))
+router.get('/management/new-inv', accValidate.checkAdmin, utilities.handleErrors(invController.buildNewInv))
 router.get('/getInventory/:classification_id', utilities.handleErrors(invController.getInventoryJSON));
 router.get('/edit/:inv_id', accValidate.checkAdmin, utilities.handleErrors(invController.editInventory));
 router.get('/delete/:inv_id', accValidate.checkAdmin, utilities.handleErrors(invController.buildDeleteInventory));

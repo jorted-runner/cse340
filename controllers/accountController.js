@@ -4,7 +4,7 @@ const accountModel = require('../models/account-model')
 const validate = require('../utilities/account-validation')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-var cookieParser = require('cookie-parser')
+const Util = require('../utilities/')
 require('dotenv').config()
 
 /* ****************************************
@@ -39,6 +39,23 @@ async function buildAccount(req, res, next) {
   })
 }
 
+async function buildUpdate(req, res) {
+  let nav = await utilities.getNav()
+  const account_id = req.params.account_id
+  const data = await accountModel.getAccountByID(account_id)
+  const title = `Update Account: ${data.account_firstname} ${data.account_lastname}`
+  res.render('./account/update', {
+    title: title,
+    nav,
+    errors: null,
+    account_id: data.account_id,
+    account_firstname: data.account_firstname,
+    account_lastname: data.account_lastname,
+    account_email: data.account_email,
+    account_password: data.account_password
+  })
+}
+
 /* ****************************************
 *  Process Registration
 * *************************************** */
@@ -47,7 +64,6 @@ async function registerAccount(req, res) {
     const { account_firstname, account_lastname, account_email, account_password } = req.body
     let hashedPassword
     try {
-      // regular password and cost (salt is generated automatically)
       hashedPassword = await bcrypt.hashSync(account_password, 10)
     } catch (error) {
       req.flash("notice", 'Sorry, there was an error processing the registration.')
@@ -111,6 +127,107 @@ async function registerAccount(req, res) {
     } catch (error) {
       return new Error('Access Forbidden')
     }
-   }
+}
 
-module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccount }
+async function accountUpdate(req, res) {
+  if (req.body.account_password) {
+    const { account_id, account_password } = req.body
+    let hashedPassword
+    try {
+      hashedPassword = await bcrypt.hashSync(account_password, 10)
+    } catch (error) {
+      let nav = await utilities.getNav()
+      const data = await accountModel.getAccountByID(account_id)
+      req.flash("notice", 'Sorry, there was an error processing your new password.')
+      res.status(500).render(`account/update`, {
+        title: `Update Account: ${data.account_firstname} ${data.account_lastname}`,
+        nav,
+        errors: null,
+        account_id: data.account_id,
+        account_firstname: data.account_firstname,
+        account_lastname: data.account_lastname,
+        account_email: data.account_email,
+        account_password: data.account_password
+      })
+    }
+    const regResult = await accountModel.updatePassword(
+      hashedPassword,
+      account_id,
+    )
+    if (regResult) {
+      let nav = await utilities.getNav()
+      const data = await accountModel.getAccountByID(account_id)
+      req.flash(
+        "notice",
+        `Congratulations, ${data.account_firstname}. Password successfully changed.`
+      )
+      res.status(201).render(`account/update`, {
+        title: `Update Account: ${data.account_firstname} ${data.account_lastname}`,
+        nav,
+        errors: null,
+        account_id: data.account_id,
+        account_firstname: data.account_firstname,
+        account_lastname: data.account_lastname,
+        account_email: data.account_email,
+        account_password: data.account_password
+      })
+    } else {
+      let nav = await utilities.getNav()
+      const data = await accountModel.getAccountByID(account_id)
+      req.flash("notice", 'Sorry, there was an error processing your new password.')
+      res.status(500).render(`account/update`, {
+        title: `Update Account: ${data.account_firstname} ${data.account_lastname}`,
+        nav,
+        errors: null,
+        account_id: data.account_id,
+        account_firstname: data.account_firstname,
+        account_lastname: data.account_lastname,
+        account_email: data.account_email,
+        account_password: data.account_password
+      })
+    }
+  } else {
+    const { account_firstname, account_lastname, account_email, account_id } = req.body
+    const regResult = await accountModel.updateAccount(
+      account_firstname,
+      account_lastname,
+      account_email,
+      account_id,
+    )
+    if (regResult) {
+      let nav = await utilities.getNav()
+      const data = await accountModel.getAccountByID(account_id)
+      req.flash(
+        "notice",
+        `Congratulations, ${data.account_firstname}. Account successfully changed.`
+      )
+      res.status(201).render(`account/update`, {
+        title: `Update Account: ${data.account_firstname} ${data.account_lastname}`,
+        nav,
+        errors: null,
+        account_id: data.account_id,
+        account_firstname: data.account_firstname,
+        account_lastname: data.account_lastname,
+        account_email: data.account_email,
+        account_password: data.account_password
+      })
+    } else {
+      let nav = await utilities.getNav()
+      const data = await accountModel.getAccountByID(account_id)
+      req.flash("notice", 'Sorry, there was an error updating your account.')
+      res.status(500).render(`account/update`, {
+        title: `Update Account: ${data.account_firstname} ${data.account_lastname}`,
+        nav,
+        errors: null,
+        account_id: data.account_id,
+        account_firstname: data.account_firstname,
+        account_lastname: data.account_lastname,
+        account_email: data.account_email,
+        account_password: data.account_password
+      })
+    }
+  }
+
+}
+
+module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccount, buildUpdate, accountUpdate }

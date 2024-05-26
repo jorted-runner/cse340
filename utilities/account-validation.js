@@ -8,27 +8,22 @@ const accountModel = require('../models/account-model')
   * ********************************* */
 validate.registrationRules = () => {
     return [
-      // firstname is required and must be string
       body("account_firstname")
         .trim()
         .escape()
         .notEmpty()
         .isLength({ min: 1 })
-        .withMessage("Please provide a first name."), // on error this message is sent.
-  
-      // lastname is required and must be string
+        .withMessage("Please provide a first name."),
       body("account_lastname")
         .trim()
         .escape()
         .notEmpty()
         .isLength({ min: 2 })
-        .withMessage("Please provide a last name."), // on error this message is sent.
-  
-      // valid email is required and cannot already exist in the database
+        .withMessage("Please provide a last name."),
       body("account_email")
         .trim()
         .isEmail()
-        .normalizeEmail() // refer to validator.js docs
+        .normalizeEmail()
         .withMessage("A valid email is required.")
         .custom(async (account_email) => {
           const emailExists = await accountModel.checkExistingEmail(account_email)
@@ -36,8 +31,6 @@ validate.registrationRules = () => {
             throw new Error("Email exists. Please log in or use different email")
           }
         }),
-  
-      // password is required and must be strong password
       body("account_password")
         .trim()
         .notEmpty()
@@ -123,6 +116,15 @@ validate.checkAdmin = async (req, res, next) => {
       req.flash("notice", "You do not have authorization to access this page.")
       return res.redirect("/")
     }
+}
+
+validate.checkMatch = async (req, res, next) => {
+  if (res.locals.accountData.account_id == req.params.account_id) {
+    next()
+  } else {
+    req.flash("notice", "You do not have authorization to access this page.")
+    return res.redirect("/")
+  }
 }
 
 module.exports = validate

@@ -4,11 +4,13 @@ const router = new express.Router()
 const utilities = require('../utilities/')
 const accountController = require('../controllers/accountController')
 const regValidate = require('../utilities/account-validation')
+const { route } = require('./static')
 
 // Remember to fix this accountsController function
 router.get("/", utilities.checkLogin, utilities.handleErrors(accountController.buildAccount))
-router.get('/login', accountController.buildLogin)
-router.get('/register', accountController.buildRegister)
+router.get('/login', utilities.handleErrors(accountController.buildLogin))
+router.get('/register', utilities.handleErrors(accountController.buildRegister))
+router.get('/update/:account_id', regValidate.checkMatch, utilities.handleErrors(accountController.buildUpdate))
 
 // Post requests
 router.post(
@@ -25,4 +27,10 @@ router.post(
   regValidate.checkLoginData,
   utilities.handleErrors(accountController.accountLogin)
 )
+
+router.post('/update/:account_id',
+  regValidate.checkMatch,
+  utilities.handleErrors(accountController.accountUpdate)
+);
+
 module.exports = router;

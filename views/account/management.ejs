@@ -11,9 +11,14 @@
 <%  }) %>
   </ul>
 <% } %>
-<% if ( locals.accountData.account_type === 'Employee' || locals.accountData.account_type === 'Admin') { %>
-  <h2>Manage Inventory</h2>
-  <%- messages() %>
+<%- messages() %>
+
+<% if ( locals.accountData.account_type == 'Client') { %>
+  <h2>Welcome <%= locals.accountData.account_firstname %></h2>
+<% } else if ( locals.accountData.account_type === 'Employee' || locals.accountData.account_type === 'Admin') { %>
+  <h2>Welcome <%= locals.accountData.account_firstname %></h2>
+  <h3>Manage Inventory</h3>
+  <p><a href="../inv/management">Add Inventory</a></p>
   <p>Select Classification:</p>
   <select name="classification_id" id="classification" required>
       <% classifications.forEach(classification => { %>
@@ -24,6 +29,6 @@
   </select>
   <table id="inventoryDisplay"></table>
 <% } %>
-
+<p><a href='../account/update/<%= locals.accountData.account_id %>'>Edit Account</a></p>
 <noscript>JavaScript must be enabled to use this page.</noscript>
 <script src="../../js/inventory.js"></script>

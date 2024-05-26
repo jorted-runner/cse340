@@ -1,0 +1,48 @@
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <% } else {
+      res.redirect('/')
+    } %>
+
+<%- messages() %>
+
+<% if (errors) { %>
+  <ul class="notice">
+ <% errors.array().forEach(error => { %>
+   <li><%= error.msg %></li>
+<%  }) %>
+ </ul>
+<% } %>
+
+<form class="form" id="updateAccountInfo" method="post">
+    <fieldset>
+      <legend>Account Information</legend>
+      <label for="accountFirstname">First Name* 
+        <input type="text" name="account_firstname" id="accountFirstname" required value="<%= locals.account_firstname %>">
+      </label>
+      <label for="accountLastname">Last Name*
+        <input type="text" name="account_lastname" id="accountLastname" required autocomplete="family-name" value="<%= locals.account_lastname %>">
+      </label>
+      <label for="accountEmail">Email Address*
+        <input type="email" name="account_email" id="accountEmail" required placeholder="chef@chefscabinet.com" value="<%= locals.account_email %>">
+      </label>
+    </fieldset>
+    <input type='hidden' name='account_id' value="<%= locals.account_id %>">
+    <button disabled type="submit">Update Account Information</button>
+  </form>
+  
+  <form class="form" id="updatePassword" method="post">
+    <fieldset>
+      <legend>Change Password</legend>
+      <label for="password">Password
+        <span>Passwords must be at least 12 characters and contain at least 1 number, 1 capital letter, and 1 special character</span>
+        <input type="password" id="password" name="account_password" required 
+          pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{12,}" 
+          title="Password must be at least 12 characters long, contain at least one uppercase letter, one number, and one special character.">
+        <button type="button" id="togglePassword" aria-label="Toggle password visibility">👁️</button>
+      </label>
+    </fieldset>
+    <input type='hidden' name='account_id' value="<%= locals.account_id %>">
+    <button disabled type="submit" id="passwordBtn">Change Password</button>
+  </form>
+  <script src="../../js/acc-update.js"></script>
