@@ -18,6 +18,7 @@ const accountRoute = require('./routes/accountRoute')
 const utilities = require('./utilities/')
 const bodyParser = require("body-parser")
 const cookieParser = require('cookie-parser')
+const purchaseRoute = require('./routes/purchaseRoute')
 
 /* ***********************
  * View Engine and Templates
@@ -58,6 +59,7 @@ app.get('/', utilities.handleErrors(baseController.buildHome))
 // Inventory routes
 app.use('/inv', utilities.handleErrors(inventoryRoute))
 app.use('/account', utilities.handleErrors(accountRoute))
+app.use('/purchase', utilities.handleErrors(purchaseRoute))
 
 
 app.use(async (req, res, next) => {

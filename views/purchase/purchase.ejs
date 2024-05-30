@@ -1,0 +1,87 @@
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <% } else {
+      res.redirect('/')
+    } %>
+
+<%- messages() %>
+
+<% if (errors) { %>
+  <ul class="notice">
+  <% errors.array().forEach(error => { %>
+    <li><%= error.msg %></li>
+<%  }) %>
+  </ul>
+<% } %>
+
+<h2>Checkout</h2>
+<div class="invoice" data-inv-price="<%= locals.inv_price %>" data-tax="<%= locals.tax %>" data-total="<%= locals.total %>">
+    <p>Item Price: <span id="item-price"></span></p>
+    <p>Tax (18%): <span id="tax"></span></p>
+    <hr>
+    <p>Total: <span id="total"></span></p>
+</div>
+
+<script src="../../js/tax.js"></script>
+
+    <form action="/submit_checkout" method="POST">
+        <h3>Customer Information</h3>
+        <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" required>
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" id="address" name="address" required>
+        </div>
+        <div class="form-group">
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" required>
+        </div>
+        <div class="form-group">
+            <label for="state">State</label>
+            <input type="text" id="state" name="state" required>
+        </div>
+        <div class="form-group">
+            <label for="zip">Zip Code</label>
+            <input type="text" id="zip" name="zip" required>
+        </div>
+
+        <h3>Payment Information</h3>
+        <div class="form-group">
+            <label for="cardName">Name on Card</label>
+            <input type="text" id="cardName" name="cardName" required>
+        </div>
+        <div class="form-group">
+            <label for="cardNumber">Credit Card Number</label>
+            <input type="text" id="cardNumber" name="cardNumber" required>
+        </div>
+        <div class="form-group">
+            <label for="expMonth">Exp Month</label>
+            <input type="text" id="expMonth" name="expMonth" required>
+        </div>
+        <div class="form-group">
+            <label for="expYear">Exp Year</label>
+            <input type="text" id="expYear" name="expYear" required>
+        </div>
+        <div class="form-group">
+            <label for="cvv">CVV</label>
+            <input type="text" id="cvv" name="cvv" required>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
