@@ -6,7 +6,6 @@ const accountController = require('../controllers/accountController')
 const regValidate = require('../utilities/account-validation')
 const { route } = require('./static')
 
-// Remember to fix this accountsController function
 router.get("/", utilities.checkLogin, utilities.handleErrors(accountController.buildAccount))
 router.get('/login', utilities.handleErrors(accountController.buildLogin))
 router.get('/register', utilities.handleErrors(accountController.buildRegister))

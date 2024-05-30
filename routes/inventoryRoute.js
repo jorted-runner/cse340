@@ -15,7 +15,6 @@ router.get('/getInventory/:classification_id', utilities.handleErrors(invControl
 router.get('/edit/:inv_id', accValidate.checkAdmin, utilities.handleErrors(invController.editInventory));
 router.get('/delete/:inv_id', accValidate.checkAdmin, utilities.handleErrors(invController.buildDeleteInventory));
 
-
 router.post(
   "/management/new-class",
   accValidate.checkAdmin,
