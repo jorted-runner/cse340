@@ -91,5 +91,14 @@ async function deleteInventory(inv_id) {
     }
 }
 
+async function checkAvailable(inv_id) {
+    if (getInventoryByInventoryId(inv_id)) {
+        return true
+    } else {
+        return false
+    }
+    
+}
 
-module.exports = {getClassifications, getInventoryByClassificationId, getInventoryByInventoryId, addNewClass, addNewInv, updateInv, deleteInventory};
+
+module.exports = {getClassifications, getInventoryByClassificationId, getInventoryByInventoryId, addNewClass, addNewInv, updateInv, deleteInventory, checkAvailable};
