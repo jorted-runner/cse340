@@ -73,6 +73,7 @@ Util.buildVehicleDetails = async function(data) {
       carDetails += `<p><strong>Description: </strong>${vehicle.inv_description}</p>`
       carDetails += `<p><strong>Color: </strong> ${vehicle.inv_color}</p>`
       carDetails += `<p><strong>Miles: </strong> ${vehicle.inv_miles}</p>`
+      carDetails +=  `<form action='/purchase/${vehicle.inv_id}' method='get'><input type='submit' value='Purchase Vehicle'></form>`
       carDetails += '</div>'
     })
     carDetails += '</div>'
